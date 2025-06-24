@@ -26,10 +26,21 @@ public class lostGame : MonoBehaviour
                 isLost = child.gameObject.GetComponent<DragDrop>().boolCheckLost();
             }
         }
-        if (isLost&&isCheck)
+        if (isLost && isCheck)
         {
-            PlayerPrefs.SetInt("IntAddItem", 0);
-            panelGameOver.SetActive(true);
+            GameOver();
         }
+    }
+    void GameOver()
+    {
+        //reset
+        PlayerPrefs.SetInt("Score", 0);//diem
+        PlayerPrefs.SetInt("IntAddItem", 0);//sao
+        PlayerPrefs.SetInt("RotateCount", 0);//itemXoay
+        PlayerPrefs.SetInt("DestroyCount", 0);//itemXoa
+        PlayerPrefs.SetInt("BoomCount", 0);//itembom
+        
+        gameObject.GetComponent<SaveOnQuit>().ResetSaveData();
+        panelGameOver.SetActive(true);
     }
 }

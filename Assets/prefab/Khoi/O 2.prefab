@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef974484c309e90469b6fc0d9f04bfad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8dac73cac088858458f028ebff2d73a9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef974484c309e90469b6fc0d9f04bfad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8dac73cac088858458f028ebff2d73a9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef974484c309e90469b6fc0d9f04bfad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8dac73cac088858458f028ebff2d73a9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -281,6 +281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isGameOver: 1
+  rotationZ: 0
 --- !u!225 &5593392350330632227
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -396,7 +397,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef974484c309e90469b6fc0d9f04bfad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8dac73cac088858458f028ebff2d73a9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

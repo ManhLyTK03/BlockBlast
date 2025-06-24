@@ -37,11 +37,13 @@ public class BoxSpawner : MonoBehaviour
                 {
                     int randomIndex = Random.Range(0, imagePrefab1.Length);
                     newImage = Instantiate(imagePrefab1[randomIndex]);
+                    newImage.name = imagePrefab1[randomIndex].name;
                 }
                 else
                 {
                     int randomIndex = Random.Range(0, imagePrefab2.Length);
                     newImage = Instantiate(imagePrefab2[randomIndex]);
+                    newImage.name = imagePrefab2[randomIndex].name;
                 }
 
                 newImage.transform.SetParent(transform, false);

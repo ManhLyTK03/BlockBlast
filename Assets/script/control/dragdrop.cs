@@ -28,6 +28,8 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         rotationZ = transform.rotation.eulerAngles.z;
 
         yield return new WaitForEndOfFrame();
+        originalPosition = rectTransform.anchoredPosition;
+        defaultScale = rectTransform.localScale;
         transform.parent.GetComponent<lostGame>().CheckLost(true);
     }
 
@@ -46,7 +48,6 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        originalPosition = rectTransform.anchoredPosition;
         if (item.isXoay)
         {
             // Bắt đầu đếm thời gian giữ
@@ -101,6 +102,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         if (item.isXoay)
         {
+            transform.parent.gameObject.GetComponent<item>().hiddenRotation(transform.GetSiblingIndex(),false);
             if (holdCoroutine != null)
             {
                 StopCoroutine(holdCoroutine);
@@ -130,12 +132,15 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData eventData)
     {
         DropBox();
+        if (item.isXoay)
+        {
+            transform.parent.gameObject.GetComponent<item>().hiddenRotation(transform.GetSiblingIndex(),true);
+        }
     }
     void setChildren()
     {
         isReset = true;
         RectTransform rectTransform = GetComponent<RectTransform>();
-        defaultScale = rectTransform.localScale;
         rectTransform.localScale = new Vector3(GridResizer.cellWidth / transform.GetChild(0).gameObject.GetComponent<RectTransform>().sizeDelta.x, GridResizer.cellHeight / transform.GetChild(0).gameObject.GetComponent<RectTransform>().sizeDelta.y, rectTransform.localScale.z);
     }
     void resetChildren()
@@ -305,6 +310,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 }
             }
             Destroy(gameObject);
+            // transform.parent.GetComponent<SaveOnQuit>().isSave();
         }
     }
 }

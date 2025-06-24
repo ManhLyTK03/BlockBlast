@@ -29,12 +29,12 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         rotationZ = transform.rotation.eulerAngles.z;
+        originalPosition = rectTransform.anchoredPosition;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         vienBoom.SetActive(true);
-        originalPosition = rectTransform.anchoredPosition;
         ExecuteHoldAction(eventData);
     }
 
@@ -88,6 +88,8 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
     {
         rectTransform.localScale = defaultScale;
         rectTransform.anchoredPosition = originalPosition;
+        vienBoom.GetComponent<MatchBorderSize>().tamBoom = rectTransform;
+        vienBoom.SetActive(false);
     }
     void FindNearestGridItems()
     {
@@ -133,6 +135,10 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
                 }
             }
         }
+        else
+        {
+            vienBoom.GetComponent<MatchBorderSize>().tamBoom = rectTransform;
+        }
         foreach (GameObject item in tickerItems)
         {
             if (nearestItemsPerChild.ContainsValue(item))
@@ -142,13 +148,13 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
             }
             else
             {
-                item.transform.GetChild(0).gameObject.GetComponent<Image>().color = colorDefault*.8f;
+                item.transform.GetChild(0).gameObject.GetComponent<Image>().color = colorDefault * .8f;
             }
         }
     }
     void DropBox()
     {
-        vienBoom.SetActive(false);
+        resetChildren();
         int tickerCount = 0;
 
         foreach (var item in nearestItemsPerChild)
@@ -174,8 +180,6 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
             {
                 if (nearestItemsPerChild.ContainsValue(item))
                 {
-                    // item.tag = "gridItem";
-                    // item.transform.GetChild(0).gameObject.SetActive(false);
                     DuplicateImage(item.transform.GetChild(0).GetComponent<Image>());
                     item.tag = "gridItem";
                     item.transform.GetChild(0).gameObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
@@ -220,7 +224,7 @@ public class boom : MonoBehaviour, IDragHandler, IEndDragHandler, IPointerDownHa
 
 
         // 1. Sinh biên độ lực
-        float forceMag = Random.Range(10f, 15f);
+        float forceMag = Random.Range(15f, 12f);
 
         // 2. Sinh góc ngẫu nhiên
         float result;

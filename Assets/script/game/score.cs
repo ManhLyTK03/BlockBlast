@@ -22,8 +22,9 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
+        score = PlayerPrefs.GetInt("Score", 0);
+        scoreText.text = "" + score;
         highScore = PlayerPrefs.GetInt("HighScore", 0);
-        scoreText.text = "0";
         highScoreText.text = highScore.ToString();
     }
 
@@ -31,6 +32,7 @@ public class ScoreManager : MonoBehaviour
     {
         int oldScore = score;
         score += amount;
+        PlayerPrefs.SetInt("Score", score);
 
         // Cập nhật high score nếu cần
         if (score > highScore)

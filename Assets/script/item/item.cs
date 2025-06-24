@@ -8,6 +8,7 @@ public class item : MonoBehaviour
     public Text textXoay;
     public Text textDestroy;
     public Text textBoom;
+    public GameObject panelXoay;
     public GameObject panelBlock;
     public GameObject objectBoom;
     public static bool isXoay = false;
@@ -17,9 +18,6 @@ public class item : MonoBehaviour
     private bool isBoom = false;
     void Start()
     {
-        PlayerPrefs.SetInt("RotateCount", 0);
-        PlayerPrefs.SetInt("DestroyCount", 0);
-        PlayerPrefs.SetInt("BoomCount", 0);
         rotateCount = PlayerPrefs.GetInt("RotateCount", 0);
         destroyCount = PlayerPrefs.GetInt("DestroyCount", 0);
         boomCount = PlayerPrefs.GetInt("BoomCount", 0);
@@ -58,12 +56,21 @@ public class item : MonoBehaviour
                     }
                 }
             }
+            for (int i = 0; i < panelBlock.transform.childCount; i++)
+            {
+                panelXoay.transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
         else
         {
             if (rotateCount > 0)
             {
                 isXoay = true;
+                for (int i = 0; i < panelBlock.transform.childCount; i++)
+                {
+                    panelXoay.transform.GetChild(i).gameObject.SetActive(true);
+                    panelXoay.transform.GetChild(i).gameObject.GetComponent<AutoRotate2D>().MatchToImageLocal(panelBlock.transform.GetChild(i).gameObject);
+                }
             }
         }
     }
@@ -94,11 +101,21 @@ public class item : MonoBehaviour
             objectBoom.SetActive(false);
         }
     }
-    public void resetItem()
+    public void addRotate()
     {
         PlayerPrefs.SetInt("RotateCount", PlayerPrefs.GetInt("RotateCount", 0) + 1);
+    }
+    public void addDestroy()
+    {
         PlayerPrefs.SetInt("DestroyCount", PlayerPrefs.GetInt("DestroyCount", 0) + 1);
+    }
+    public void addBoom()
+    {
         PlayerPrefs.SetInt("BoomCount", PlayerPrefs.GetInt("BoomCount", 0) + 1);
+    }
+    public void hiddenRotation(int intBlock,bool hidden)
+    {
+        panelXoay.transform.GetChild(intBlock).gameObject.SetActive(hidden);
     }
 
 }

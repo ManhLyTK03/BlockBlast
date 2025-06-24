@@ -28,14 +28,6 @@ public class GridSpawner : MonoBehaviour
                 GameObject cell = Instantiate(imagePrefab, transform);
                 cell.name = $"Cell_{row}_{col}";
                 gridObjects[row, col] = cell;
-
-                // Tính toán màu trắng hoặc xám
-                bool isBlack = (row + col) % 2 == 0;
-                Image img = cell.GetComponent<Image>();
-                if (img != null)
-                {
-                    img.color = isBlack ? Color.black : new Color32(100, 100, 100, 255);
-                }
             }
         }
     }
@@ -133,6 +125,8 @@ public class GridSpawner : MonoBehaviour
                 ScoreManager.Instance.AddScore(10 * scoreGrid * scoreGrid * rows);
             }
         }
+        
+        lostGame.GetComponent<SaveOnQuit>().isSave();
 
     }
     public void checkWin(Sprite newSprite)
