@@ -6,24 +6,23 @@ using UnityEngine.UI;
 public class addItem : MonoBehaviour
 {
     public GameObject prefabObstacle;
+    public GameObject prefabIce;
     public GameObject panelAdd;
+    public RectTransform panelStart;
     public GameObject starObject;
-    private int intCheck;
-    public int activeObstacle = 5;
+    private int intCheckObstacle;
+    private int scoreIce = 10000;
+    private int intCheckIce;
+    private int activeObstacle = 5;
+    private int activeIce = 10;
     public int TrueAdd = 8;
-    private int intaddItem = 0;
+    public int intaddItem = 0;
     private GameObject[] gridObjects;
     private List<GameObject> validGrids = new List<GameObject>();
     IEnumerator Start()
     {
-        intCheck = activeObstacle;
-        for (int i = 0; i < TrueAdd; i++)
-        {
-            GameObject imgObj = new GameObject("Image_" + (i + 1));
-            imgObj.transform.SetParent(panelAdd.transform, false); // false: giữ local scale
-            Image img = imgObj.AddComponent<Image>();
-            imgObj.GetComponent<RectTransform>().pivot = new Vector2(0f, imgObj.GetComponent<RectTransform>().pivot.y);
-        }
+        intCheckObstacle = PlayerPrefs.GetInt("intCheckObstacle", 0);
+        intCheckIce = PlayerPrefs.GetInt("intCheckIce", 0);
         intaddItem = PlayerPrefs.GetInt("IntAddItem", 0);
 
         yield return new WaitForEndOfFrame();
@@ -31,15 +30,34 @@ public class addItem : MonoBehaviour
     }
     public void checkObstacle()
     {
-        intCheck--;
-        if (intCheck == 0)
+        intCheckObstacle++;
+        PlayerPrefs.SetInt("intCheckObstacle", intCheckObstacle); // lưu lại
+        if (intCheckObstacle == activeObstacle)
         {
-            intCheck = activeObstacle;
-            addObstacle();
+            intCheckObstacle = 0;
+            PlayerPrefs.SetInt("intCheckObstacle", intCheckObstacle); // cập nhật lại
+            addObstacle(prefabObstacle);
+        }
+        int score = PlayerPrefs.GetInt("Score", 0);
+        activeIce = 11 - score / scoreIce;
+        if (activeIce < 5)
+        {
+            activeIce = 5;
+        }
+        if (score > scoreIce)
+        {
+            intCheckIce++;
+            PlayerPrefs.SetInt("intCheckIce", intCheckIce); // lưu lại
+            if (intCheckIce == activeIce)
+            {
+                intCheckIce = 0;
+                PlayerPrefs.SetInt("intCheckIce", intCheckIce); // cập nhật lại
+                addObstacle(prefabIce);
+            }
         }
     }
 
-    void addObstacle()
+    void addObstacle(GameObject prefab)
     {
         gridObjects = GameObject.FindGameObjectsWithTag("ticker");
         validGrids.Clear(); // Đảm bảo danh sách trống trước khi thêm
@@ -57,7 +75,8 @@ public class addItem : MonoBehaviour
         if (validGrids.Count > 0)
         {
             int randomIndex = Random.Range(0, validGrids.Count);
-            Instantiate(prefabObstacle, validGrids[randomIndex].transform);
+            GameObject Obj = Instantiate(prefab, validGrids[randomIndex].transform);
+            Obj.name = prefab.name;
         }
         else
         {
@@ -90,19 +109,23 @@ public class addItem : MonoBehaviour
     }
     void setPosition()
     {
-        starObject.GetComponent<RectTransform>().position = panelAdd.transform.GetChild(intaddItem).GetComponent<RectTransform>().position;
+        // panelStart.rect.width = (panelAdd.GetComponent<RectTransform>().rect.width/TrueAdd)*intaddItem;
+        float progress = (float)intaddItem / (float)TrueAdd;
+        panelStart.gameObject.GetComponent<Image>().fillAmount = Mathf.Clamp01(progress);
 
-        for (int i = 0; i < panelAdd.transform.childCount; i++)
-        {
-            Transform child = panelAdd.transform.GetChild(i);
-            if (i < intaddItem)
-            {
-                child.gameObject.GetComponent<Image>().color = Color.yellow;
-            }
-            else
-            {
-                child.gameObject.GetComponent<Image>().color = Color.white;
-            }
-        }
+        RectTransform rt = panelStart.transform.GetChild(1).GetComponent<RectTransform>();
+        //thay đổi điểm neo
+        Vector2 anchorMin = rt.anchorMin;
+        Vector2 anchorMax = rt.anchorMax;
+        anchorMin.x = progress;
+        anchorMax.x = progress;
+        rt.anchorMin = anchorMin;
+        rt.anchorMax = anchorMax;
+        //đặt lại vị trí về điểm neo
+        Vector3 pos = rt.anchoredPosition;
+        pos.x = 0f; // Giá trị X bạn muốn đặt
+        rt.anchoredPosition = pos;
+
     }
 }
+ 

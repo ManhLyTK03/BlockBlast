@@ -1,14 +1,18 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class SaveOnQuit : MonoBehaviour
 {
     public GameObject[] prefabBoxs;
     public Sprite[] imageGrids;
+    public GameObject prefabObstacle;
+    public GameObject prefabIce;
     public GameObject backGrid;
     private int[] intBoxs;
     private int[] angles;
-    int[] grids;
+    private int[] grids;
+    private int[] gridObstacles;
     public HorizontalLayoutGroup layoutGroup;
 
     private void Awake()
@@ -26,8 +30,6 @@ public class SaveOnQuit : MonoBehaviour
         else
         {
             Spawn();
-            intBoxs = new int[0];
-            angles = new int[0];
         }
         if (grids == null || grids.Length == 0)
         {
@@ -36,29 +38,49 @@ public class SaveOnQuit : MonoBehaviour
         else
         {
             setGrid();
-            grids = new int[0];
         }
     }
 
     private void setGrid()
     {
+        int randomImage = Random.Range(0, imageGrids.Length);
+        for (int i = 0; i < backGrid.transform.childCount; i++)
+        {
+            backGrid.transform.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
+            backGrid.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = imageGrids[randomImage];
+        }
+        // Gọi coroutine để ẩn các image có grids[i] == 0
+        StartCoroutine(HideGridImages());
+    }
+    private IEnumerator HideGridImages()
+    {
         for (int i = 0; i < backGrid.transform.childCount; i++)
         {
             if (grids[i] == 0)
             {
-
+                yield return new WaitForSeconds(0.01f); // chờ 0.2 giây giữa các lần ẩn
+                backGrid.transform.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 0);
             }
             else
             {
-                backGrid.transform.GetChild(i).GetChild(0).gameObject.SetActive(true);
+                if (gridObstacles[i] / 10 == 1)
+                {
+                    GameObject Obj = Instantiate(prefabObstacle, backGrid.transform.GetChild(i));
+                    Obj.name = prefabObstacle.name;
+                    Obj.GetComponent<obstacle>().activeObstacle(gridObstacles[i] % 10);
+                }
+                else if (gridObstacles[i] / 10 == 2)
+                {
+                    GameObject Obj = Instantiate(prefabIce, backGrid.transform.GetChild(i));
+                    Obj.name = prefabIce.name;
+                    Obj.GetComponent<Ice>().setIce(gridObstacles[i] % 10);
+                }
                 backGrid.transform.GetChild(i).tag = "ticker";
-                backGrid.transform.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color(1, 1, 1, 1);
                 backGrid.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = imageGrids[grids[i] - 1];
             }
         }
-        backGrid.GetComponent<GridSpawner>().CheckWinCondition();
+        backGrid.GetComponent<GridSpawner>().setUpStart();
     }
-
     private void Spawn()
     {
         if (transform.childCount == 0)
@@ -98,6 +120,7 @@ public class SaveOnQuit : MonoBehaviour
     {
         intBoxs = new int[0];
         angles = new int[0];
+        grids = new int[0];
         foreach (Transform child in transform)
         {
             for (int i = 0; i < prefabBoxs.Length; i++)
@@ -109,15 +132,27 @@ public class SaveOnQuit : MonoBehaviour
             }
         }
         grids = new int[backGrid.transform.childCount];
+        gridObstacles = new int[backGrid.transform.childCount];
         for (int i = 0; i < backGrid.transform.childCount; i++)
         {
-            if (backGrid.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color.a == 1)
+            if (backGrid.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().color.a == 1 && backGrid.transform.GetChild(i).tag == "ticker")
             {
                 for (int y = 0; y < imageGrids.Length; y++)
                 {
                     if (backGrid.transform.GetChild(i).GetChild(0).gameObject.GetComponent<Image>().sprite.name == imageGrids[y].name)
                     {
                         grids[i] = y + 1;
+                    }
+                }
+                if (backGrid.transform.GetChild(i).transform.childCount > 1)
+                {
+                    if (backGrid.transform.GetChild(i).GetChild(1).gameObject.name == "Ice")
+                    {
+                        gridObstacles[i] = 20 + backGrid.transform.GetChild(i).GetChild(1).gameObject.GetComponent<Ice>().intObstancle;
+                    }
+                    else if (backGrid.transform.GetChild(i).GetChild(1).gameObject.name == "obstacle")
+                    {
+                        gridObstacles[i] = 10 + backGrid.transform.GetChild(i).GetChild(1).gameObject.GetComponent<obstacle>().intObstancle;
                     }
                 }
             }
@@ -154,6 +189,10 @@ public class SaveOnQuit : MonoBehaviour
         PlayerPrefs.SetInt("grids_Length", grids.Length);
         for (int i = 0; i < grids.Length; i++)
             PlayerPrefs.SetInt($"grids_{i}", grids[i]);
+        // **lưu độ dài gridObstacles**
+        PlayerPrefs.SetInt("gridObstacles_Length", gridObstacles.Length);
+        for (int i = 0; i < gridObstacles.Length; i++)
+            PlayerPrefs.SetInt($"gridObstacles_{i}", gridObstacles[i]);
 
         PlayerPrefs.Save();
     }
@@ -186,6 +225,14 @@ public class SaveOnQuit : MonoBehaviour
             for (int i = 0; i < lenGrids; i++)
                 grids[i] = PlayerPrefs.GetInt($"grids_{i}", 0);
         }
+        // **load gridObstacles**
+        int lengridObstacles = PlayerPrefs.GetInt("gridObstacles_Length", 0);
+        if (lengridObstacles > 0)
+        {
+            gridObstacles = new int[lengridObstacles];
+            for (int i = 0; i < lengridObstacles; i++)
+                gridObstacles[i] = PlayerPrefs.GetInt($"gridObstacles_{i}", 0);
+        }
     }
 
     // Hàm reset toàn bộ dữ liệu đã lưu và runtime
@@ -209,6 +256,12 @@ public class SaveOnQuit : MonoBehaviour
             PlayerPrefs.DeleteKey($"grids_{i}");
         PlayerPrefs.DeleteKey("grids_Length");
 
+        // 3. Xoá PlayerPrefs cho gridObstacles
+        int lengridObstacles = PlayerPrefs.GetInt("gridObstacles_Length", 0);
+        for (int i = 0; i < lengridObstacles; i++)
+            PlayerPrefs.DeleteKey($"gridObstacles_{i}");
+        PlayerPrefs.DeleteKey("gridObstacles_Length");
+
         // 4. Lưu lại
         PlayerPrefs.Save();
 
@@ -216,5 +269,6 @@ public class SaveOnQuit : MonoBehaviour
         intBoxs = new int[0];
         angles  = new int[0];
         grids   = new int[0];
+        gridObstacles   = new int[0];
     }
 }

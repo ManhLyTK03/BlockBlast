@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class lostGame : MonoBehaviour
 {
-    public bool isLost = true;
     public GameObject panelGameOver;
+    public Text scoreTextGameOver;
+    public bool isLost = true;
     void OnEnable()
     {
         CheckLost(true);
@@ -33,14 +35,8 @@ public class lostGame : MonoBehaviour
     }
     void GameOver()
     {
-        //reset
-        PlayerPrefs.SetInt("Score", 0);//diem
-        PlayerPrefs.SetInt("IntAddItem", 0);//sao
-        PlayerPrefs.SetInt("RotateCount", 0);//itemXoay
-        PlayerPrefs.SetInt("DestroyCount", 0);//itemXoa
-        PlayerPrefs.SetInt("BoomCount", 0);//itembom
-        
-        gameObject.GetComponent<SaveOnQuit>().ResetSaveData();
-        panelGameOver.SetActive(true);
+        int score = PlayerPrefs.GetInt("Score", 0);
+        scoreTextGameOver.text = "" + score;
+        panelGameOver.SetActive(true);//hien thi thua
     }
 }

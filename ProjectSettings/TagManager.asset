@@ -8,6 +8,8 @@ TagManager:
   - ticker
   - boolTicker
   - obstacle
+  - other
+  - ice
   layers:
   - Default
   - TransparentFX

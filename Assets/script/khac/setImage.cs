@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
@@ -9,9 +10,9 @@ public class setImage : MonoBehaviour
     private RectTransform rt;
     public float targetWidth;
 
-    void Start()
+    IEnumerator Start()
     {
-        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent.GetComponent<RectTransform>());
+        yield return new WaitForEndOfFrame();
         img = GetComponent<Image>();
         rt = img.GetComponent<RectTransform>();
 

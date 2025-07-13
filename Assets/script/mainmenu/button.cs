@@ -24,4 +24,25 @@ public class MainMenuController : MonoBehaviour
     {
         Application.Quit();
     }
+    public void ReStart(GameObject objLost)
+    {
+        //reset
+        CoinManager.Instance.AddCoins(PlayerPrefs.GetInt("Score", 0)/2000);
+        PlayerPrefs.SetInt("Score", 0);//diem
+        PlayerPrefs.SetInt("IntAddItem", 0);//sao
+        PlayerPrefs.SetInt("RotateCount", 0);//itemXoay
+        PlayerPrefs.SetInt("DestroyCount", 0);//itemXoa
+        PlayerPrefs.SetInt("BoomCount", 0);//itembom
+        PlayerPrefs.SetInt("intCheckObstacle", 0);// tạo báu vật
+        PlayerPrefs.SetInt("intCheckIce", 0);//tạo băng
+        objLost.GetComponent<SaveOnQuit>().ResetSaveData();//khac
+    }
+    public void watchLostDown(GameObject obj)
+    {
+        obj.SetActive(false);
+    }
+    public void watchLostUp(GameObject obj)
+    {
+        obj.SetActive(true);   
+    }
 }

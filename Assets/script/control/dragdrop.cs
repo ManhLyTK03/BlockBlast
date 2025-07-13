@@ -297,16 +297,15 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             GameObject obj = GameObject.Find("Grid");
             if (obj != null)
             {
-                GridSpawner grid = obj.GetComponent<GridSpawner>();
-                if (grid != null)
-                {
-                    grid.CheckWinCondition();
-                }
-
                 addItem obstacle = obj.GetComponent<addItem>();
                 if (obstacle != null)
                 {
                     obstacle.checkObstacle();
+                }
+                GridSpawner grid = obj.GetComponent<GridSpawner>();
+                if (grid != null)
+                {
+                    grid.CheckWinCondition();
                 }
             }
             Destroy(gameObject);

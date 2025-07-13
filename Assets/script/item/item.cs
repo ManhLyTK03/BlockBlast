@@ -101,19 +101,44 @@ public class item : MonoBehaviour
             objectBoom.SetActive(false);
         }
     }
-    public void addRotate()
+    public void addRotate(int intAdd)
     {
-        PlayerPrefs.SetInt("RotateCount", PlayerPrefs.GetInt("RotateCount", 0) + 1);
+        PlayerPrefs.SetInt("RotateCount", PlayerPrefs.GetInt("RotateCount", 0) + intAdd);
+        rotateCount = PlayerPrefs.GetInt("RotateCount", 0);
+        textXoay.text = rotateCount.ToString();
     }
-    public void addDestroy()
+    public void addDestroy(int intAdd)
     {
-        PlayerPrefs.SetInt("DestroyCount", PlayerPrefs.GetInt("DestroyCount", 0) + 1);
+        PlayerPrefs.SetInt("DestroyCount", PlayerPrefs.GetInt("DestroyCount", 0) + intAdd);
+        destroyCount = PlayerPrefs.GetInt("DestroyCount", 0);
+        textDestroy.text = destroyCount.ToString();
     }
-    public void addBoom()
+    public void addBoom(int intAdd)
     {
-        PlayerPrefs.SetInt("BoomCount", PlayerPrefs.GetInt("BoomCount", 0) + 1);
+        PlayerPrefs.SetInt("BoomCount", PlayerPrefs.GetInt("BoomCount", 0) + intAdd);
+        boomCount = PlayerPrefs.GetInt("BoomCount", 0);
+        textBoom.text = boomCount.ToString();
     }
-    public void hiddenRotation(int intBlock,bool hidden)
+    public void OnWatchAdToDestroy(RewardedAdsButton rewardedAds)
+    {
+        rewardedAds.ShowAd(() => {
+            addDestroy(1);
+        });
+    }
+    public void OnWatchAdToBoom(RewardedAdsButton rewardedAds)
+    {
+        rewardedAds.ShowAd(() =>
+        {
+            addBoom(1);
+        });
+    }
+    public void OnWatchAdToRotation(RewardedAdsButton rewardedAds)
+    {
+        rewardedAds.ShowAd(() => {
+            addRotate(1);
+        });
+    }
+    public void hiddenRotation(int intBlock, bool hidden)
     {
         panelXoay.transform.GetChild(intBlock).gameObject.SetActive(hidden);
     }
